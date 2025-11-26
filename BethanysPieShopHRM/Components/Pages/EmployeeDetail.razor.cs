@@ -1,6 +1,8 @@
-﻿using BethanysPieShopHRM.Services;
+﻿using BethanysPieShopHRM.Contracts.Services;
+using BethanysPieShopHRM.Services;
 using BethanysPieShopHRM.Shared.Domain;
 using Microsoft.AspNetCore.Components;
+using System.Threading.Tasks;
 
 namespace BethanysPieShopHRM.Components.Pages
 {
@@ -11,9 +13,11 @@ namespace BethanysPieShopHRM.Components.Pages
 
         public Employee Employee { get; set; } = new Employee();
 
-        protected override void OnInitialized()
+        [Inject]
+        public IEmployeeDataService? EmployeeDataService { get; set; } = default!;
+        protected async override  Task OnInitializedAsync()
         {
-            Employee = MockDataService.Employees.Single(e => e.EmployeeId == EmployeeId);
+            Employee  = await EmployeeDataService!.GetEmployeeDetails(EmployeeId);
         }
 
         private void ChangeHolidayState()
