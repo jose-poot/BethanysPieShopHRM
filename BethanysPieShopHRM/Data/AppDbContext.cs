@@ -5,14 +5,14 @@ namespace BethanysPieShopHRM.Data
 {
     public class AppDbContext : DbContext
     {
-       public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<Country> Countries { get; set; }
-
+        public DbSet<TimeRegistration> TimeRegistrations { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -62,6 +62,20 @@ namespace BethanysPieShopHRM.Data
             });
 
 
+            var random = new Random(1);
+
+            for (int i = 1; i <= 1000; i++)
+            {
+                modelBuilder.Entity<TimeRegistration>().HasData(new TimeRegistration()
+                {
+                    TimeRegistrationId = i,
+                    EmployeeId = 1,
+                    StartTime = new DateTime(2024, 1, 1).AddDays(random.Next(365)).AddHours(random.Next(0, 24)).AddMinutes(random.Next(0, 60)).AddSeconds(random.Next(0, 60)),
+                    EndTime = new DateTime(2024, 1, 1).AddDays(random.Next(365)).AddHours(random.Next(0, 24)).AddMinutes(random.Next(0, 60)).AddSeconds(random.Next(0, 60)),
+                    PerformedTaskDescription = $"Task {i}"
+                });
+
+            }
         }
     }
 }
