@@ -63,4 +63,5 @@ namespace BethanysPieShopHRM.Shared.Domain
         public byte[]? ImageContent { get; set; }
         public string? ImageName { get; set; }
     }
+
 }
