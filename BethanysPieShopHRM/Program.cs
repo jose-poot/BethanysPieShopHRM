@@ -18,13 +18,17 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
         builder.Configuration["ConnectionStrings:DefaultConnection"]
         ));
 
-
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ITimeRegistrationRepository, TimeRegistrationRepository>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<IJobCategoryRepository, JobCategoryRepository>();
 builder.Services.AddScoped<IEmployeeDataService,EmployeeDataService>();
 builder.Services.AddScoped<ITimeRegistrationService, TimeRegistrationService>();
+builder.Services.AddScoped<ICountryDataService, CountryDataService>();
+builder.Services.AddScoped<IJobCategoryDataService, JobCategoryDataService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ApplicationState>();
-
+//builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
