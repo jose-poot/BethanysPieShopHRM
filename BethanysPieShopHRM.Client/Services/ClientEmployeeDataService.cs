@@ -1,4 +1,5 @@
-﻿using BethanysPieShopHRM.Shared.Domain;
+﻿using BethanysPieShopHRM.Client.Helper;
+using BethanysPieShopHRM.Shared.Domain;
 using Blazored.LocalStorage;
 using System.Net.Http;
 using System.Text.Json;

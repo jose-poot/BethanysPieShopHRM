@@ -4,11 +4,11 @@ using BethanysPieShopHRM.Shared.Domain;
 
 namespace BethanysPieShopHRM.Services
 {
-    public class TimeRegistrationService : ITimeRegistrationService
+    public class TimeRegistrationDataService : ITimeRegistrationDataService
     {
         private readonly ITimeRegistrationRepository _timeRegistrationRepository;
 
-        public TimeRegistrationService(ITimeRegistrationRepository timeRegistrationRepository)
+        public TimeRegistrationDataService(ITimeRegistrationRepository timeRegistrationRepository)
         {
             _timeRegistrationRepository = timeRegistrationRepository;
         }

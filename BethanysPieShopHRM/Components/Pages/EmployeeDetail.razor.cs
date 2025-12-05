@@ -2,9 +2,10 @@
 using BethanysPieShopHRM.Contracts.Services;
 using BethanysPieShopHRM.Services;
 using BethanysPieShopHRM.Shared.Domain;
+using BethanysPieShopHRM.Shared.Model;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using System.Threading.Tasks;
 
 namespace BethanysPieShopHRM.Components.Pages
 {
@@ -13,40 +14,52 @@ namespace BethanysPieShopHRM.Components.Pages
         [Parameter]
         public int EmployeeId { get; set; }
 
-        public Employee Employee { get; set; } = new Employee();
+        [Inject]
+        public IEmployeeDataService? EmployeeDataService { get; set; }
+
+        [Inject]
+        public ITimeRegistrationDataService? TimeRegistrationDataService { get; set; }
 
         public List<TimeRegistration> TimeRegistrations { get; set; } = [];
-        [Inject]
-        public IEmployeeDataService? EmployeeDataService { get; set; } = default!;
-        [Inject]
-        public ITimeRegistrationService? TimeRegistrationService { get; set; } = default!;
+
+        public List<Marker> MapMarkers { get; set; } = new List<Marker>();
+
+        public Employee Employee { get; set; } = new Employee();
         private float itemHeight = 50;
         protected IQueryable<TimeRegistration>? itemsQueryable;
-        protected int queryableCount;
-        protected async override  Task OnInitializedAsync()
+        protected int queryableCount = 0;
+        public PaginationState pagination = new() { ItemsPerPage = 10 };
+
+        protected async override Task OnInitializedAsync()
         {
-            Employee  = await EmployeeDataService!.GetEmployeeDetails(EmployeeId);
-            //TimeRegistrations = await TimeRegistrationService!.GetTimeRegistrationsForEmployee(EmployeeId);
-
-            itemsQueryable = (await TimeRegistrationService!.GetTimeRegistrationsForEmployee(EmployeeId)).AsQueryable();
-
+            Employee = await EmployeeDataService.GetEmployeeDetails(EmployeeId);
+            //TimeRegistrations = await TimeRegistrationDataService.GetTimeRegistrationsForEmployee(EmployeeId);
+            itemsQueryable = (await TimeRegistrationDataService.GetTimeRegistrationsForEmployee(EmployeeId)).AsQueryable();
             queryableCount = itemsQueryable.Count();
+
+            if (Employee.Longitude.HasValue && Employee.Latitude.HasValue)
+            {
+                MapMarkers = new List<Marker>
+            {
+                new Marker{Description = $"{Employee.FirstName} {Employee.LastName}",  ShowPopup = false, X = Employee.Longitude.Value, Y = Employee.Latitude.Value}
+            };
+            }
+
         }
-        public async ValueTask<ItemsProviderResult<TimeRegistration>> LoadTimeRegistrations(ItemsProviderRequest request)
-        {
-            int totalNumberOfTimeRegistrations = await TimeRegistrationService.GetTimeRegistrationCountForEmployeeId(EmployeeId);
-
-            var numberOfTimeRegistrations = Math.Min(request.Count, totalNumberOfTimeRegistrations - request.StartIndex);
-            var listItems = await TimeRegistrationService.GetPagedTimeRegistrationsForEmployee(EmployeeId, numberOfTimeRegistrations, request.StartIndex);
-
-            return new ItemsProviderResult<TimeRegistration>(listItems, totalNumberOfTimeRegistrations);
-        }
-
-
 
         private void ChangeHolidayState()
         {
-            Employee.IsOnHoliday=!Employee.IsOnHoliday;
+            Employee.IsOnHoliday = !Employee.IsOnHoliday;
+        }
+
+        public async ValueTask<ItemsProviderResult<TimeRegistration>> LoadTimeRegistrations(ItemsProviderRequest request)
+        {
+            int totalNumberOfTimeRegistrations = await TimeRegistrationDataService.GetTimeRegistrationCountForEmployeeId(EmployeeId);
+
+            var numberOfTimeRegistrations = Math.Min(request.Count, totalNumberOfTimeRegistrations - request.StartIndex);
+            var listItems = await TimeRegistrationDataService.GetPagedTimeRegistrationsForEmployee(EmployeeId, numberOfTimeRegistrations, request.StartIndex);
+
+            return new ItemsProviderResult<TimeRegistration>(listItems, totalNumberOfTimeRegistrations);
         }
     }
 }

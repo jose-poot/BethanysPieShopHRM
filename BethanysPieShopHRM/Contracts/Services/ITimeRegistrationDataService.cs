@@ -2,7 +2,7 @@
 
 namespace BethanysPieShopHRM.Contracts.Services
 {
-    public interface ITimeRegistrationService
+    public interface ITimeRegistrationDataService
     {
         Task<List<TimeRegistration>> GetTimeRegistrationsForEmployee(int employeeId);
         Task<int> GetTimeRegistrationCountForEmployeeId(int employeeId);
